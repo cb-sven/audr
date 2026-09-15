@@ -1,0 +1,30 @@
+---
+/**
+ * The /404 graphic. The labels stay here rather than in a content file: each is
+ * half of an `x`/`y` pair inside a drawing, not copy to be reworded.
+ */
+---
+
+<div class="col-right" aria-hidden="true">
+  <div class="visual">
+    <svg viewBox="0 0 720 900" preserveAspectRatio="xMidYMid slice">
+      <rect width="720" height="900" fill="var(--viz-bg)" />
+
+      <text class="viz-code viz-muted viz-label" x="64" y="88">// sink.merge</text>
+
+      <rect class="viz-ghost" x="64" y="128" width="592" height="420" rx="4" />
+      <text class="viz-code" x="96" y="188">{'{'}</text>
+      <text class="viz-code viz-muted" x="128" y="228">"run": {'{'}</text>
+      <text class="viz-code viz-muted" x="160" y="268">"run_id": "—"</text>
+      <text class="viz-code viz-muted" x="128" y="308">{'},'}</text>
+      <text class="viz-code" x="128" y="356">"error": {'{'}</text>
+      <text class="viz-code" x="160" y="396">"status": 404,</text>
+      <text class="viz-code" x="160" y="436">"code": "record_not_found"</text>
+      <text class="viz-code" x="128" y="476">{'}'}</text>
+      <text class="viz-code" x="96" y="516">{'}'}</text>
+
+      <text class="viz-numeral" x="64" y="720">404</text>
+      <text class="viz-code viz-muted" x="64" y="768">no matching object</text>
+    </svg>
+  </div>
+</div>

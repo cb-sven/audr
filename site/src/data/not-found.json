@@ -1,0 +1,42 @@
+{
+  "title": "Page not found — AUDR",
+  "description": "This page does not exist on openaudr.dev. Return to the AUDR homepage or read the specification.",
+  "stamp": "HTTP 404",
+  "heading": "Page not found",
+  "lede": "Nothing is published at this address. The record was never emitted, or the path has moved.",
+  "requestMethod": "GET",
+  "actions": [
+    {
+      "label": "Back to AUDR",
+      "href": "/"
+    },
+    {
+      "label": "Read the spec",
+      "href": "/spec/v1.0.0/"
+    }
+  ],
+  "destinationsLabel": "Where to go instead",
+  "destinations": [
+    {
+      "label": "Homepage",
+      "path": "/",
+      "href": "/"
+    },
+    {
+      "label": "Specification v1.0.0",
+      "path": "/spec/v1.0.0/",
+      "href": "/spec/v1.0.0/"
+    },
+    {
+      "label": "Homepage for agents",
+      "path": "/index.md",
+      "href": "/index.md"
+    },
+    {
+      "label": "GitHub",
+      "path": "openaudr/audr",
+      "href": "https://github.com/openaudr/audr/tree/main/",
+      "external": true
+    }
+  ]
+}

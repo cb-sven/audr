@@ -48,7 +48,8 @@ one, edit only its file. `src/components/landing/Section.astro` maps `template`
 to a component, and `src/pages/index.astro` just orders them and hands them over.
 
 Site chrome that is data rather than prose — nav and footer links, the page
-title, the analytics ID — lives in `src/data/site.json`.
+title, the analytics ID — lives in `src/data/site.json`, and the not-found
+page's copy in `src/data/not-found.json`.
 
 ### Structured data follows the content
 
@@ -68,6 +69,7 @@ site/
 │   ├── data/site.json        Nav, footer, page metadata
 │   ├── layouts/Landing.astro Document shell for the landing page
 │   ├── pages/index.astro     Orders sections and hands them to templates
+│   ├── pages/404.astro       Not-found page, in the landing page's shell
 │   ├── components/landing/   The templates — markup, no copy
 │   ├── components/icons/     Line glyphs and the GitHub mark
 │   ├── scripts/              Landing behaviour, plus the sidebar scroll-spy
@@ -138,3 +140,8 @@ link to the Markdown and JSON Schema representations of what they describe.
 
 The build is static and self-contained: `site/dist/` is the document root, and
 can be served by any static host.
+
+`dist/404.html` is the not-found page. Starlight's own is turned off in
+`astro.config.mjs` so `src/pages/404.astro` owns the route. On CloudFront, map
+both 403 and 404 to `/404.html` and return status **404** — an S3 REST origin
+answers a missing object with 403.

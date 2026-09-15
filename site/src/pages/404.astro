@@ -1,0 +1,97 @@
+---
+/**
+ * Built to `dist/404.html`, which the host serves for any address that does not
+ * resolve. Copy lives in `src/data/not-found.json`, as it does for the landing
+ * page.
+ */
+import Landing from '../layouts/Landing.astro';
+import Nav from '../components/landing/Nav.astro';
+import Footer from '../components/landing/Footer.astro';
+import NotFoundVisual from '../components/landing/NotFoundVisual.astro';
+
+import '../styles/not-found.css';
+
+import site from '../data/site.json';
+import copy from '../data/not-found.json';
+
+const isExternal = (href: string) => href.startsWith('http');
+
+// The nav's section links are written for the homepage, which this is not.
+const navLinks = site.nav.map((link) =>
+	link.href.startsWith('#') ? { ...link, href: `/${link.href}` } : link
+);
+---
+
+<Landing
+	title={copy.title}
+	description={copy.description}
+	alternates={false}
+	noindex
+	bodyClass="not-found"
+>
+	<a class="skip-link" href="#content">Skip to content</a>
+
+	<Nav
+		wordmark={site.wordmark}
+		suffix={site.wordmarkSuffix}
+		home="/"
+		links={navLinks}
+	/>
+
+	<main class="split">
+		<div class="col-left">
+			<div class="copy" id="content">
+				<div class="stamp"><span class="dot" />{copy.stamp}</div>
+				<h1>{copy.heading}</h1>
+				<p class="lede">{copy.lede}</p>
+
+				<div class="path-chip" hidden>
+					<span>{copy.requestMethod}</span>
+					<code id="requested-path"></code>
+				</div>
+
+				<div class="cta-row">
+					{
+						copy.actions.map((action, i) => (
+							<a
+								class={`btn ${i === 0 ? 'btn-solid' : 'btn-outline'}`}
+								href={action.href}
+							>
+								{action.label}
+							</a>
+						))
+					}
+				</div>
+
+				<ul class="destinations" aria-label={copy.destinationsLabel}>
+					{
+						copy.destinations.map((destination) => (
+							<li>
+								<a
+									href={destination.href}
+									target={isExternal(destination.href) ? '_blank' : undefined}
+									rel={isExternal(destination.href) ? 'noopener noreferrer' : undefined}
+								>
+									<span class="dest-name">{destination.label}</span>
+									<span class="dest-path">{destination.path}</span>
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</div>
+		</div>
+
+		<NotFoundVisual />
+	</main>
+
+	<Footer
+		wordmark={site.wordmark}
+		tagline={site.footer.tagline}
+		links={site.footer.links}
+	/>
+
+	<script>
+		import '../scripts/requested-path.js';
+	</script>
+</Landing>

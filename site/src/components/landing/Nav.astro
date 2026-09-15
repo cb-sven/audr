@@ -4,15 +4,17 @@ import Icon from '../icons/Icon.astro';
 interface Props {
 	wordmark: string;
 	suffix: string;
+	/** Where the wordmark goes; the landing page returns to its own top. */
+	home?: string;
 	links: { label: string; href: string; external?: boolean }[];
 }
 
-const { wordmark, suffix, links } = Astro.props;
+const { wordmark, suffix, home = '#', links } = Astro.props;
 ---
 
 <nav class="nav" data-open="false">
   <div class="nav-inner">
-    <a class="nav-mark" href="#" aria-label={`${wordmark} home`}>
+    <a class="nav-mark" href={home} aria-label={`${wordmark} home`}>
       <svg
         class="mark-icon"
         viewBox="0 0 256 256"

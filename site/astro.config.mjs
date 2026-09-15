@@ -35,6 +35,8 @@ export default defineConfig({
 			title: 'AUDR',
 			description: 'A JSON record format for agent cost monitoring and monetization.',
 			favicon: '/favicon.svg',
+			// `src/pages/404.astro` owns the route; Starlight's would collide.
+			disable404Route: true,
 			logo: { src: './src/assets/audr-mark.svg' },
 			customCss: ['./src/styles/theme.css'],
 			social: [

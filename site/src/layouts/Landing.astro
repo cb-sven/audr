@@ -13,10 +13,21 @@ import { analyticsSnippet } from '../lib/analytics.mjs';
 interface Props {
 	title: string;
 	description: string;
-	jsonLd: unknown;
+	jsonLd?: unknown;
+	/** Links to the homepage's Markdown and JSON-LD representations. */
+	alternates?: boolean;
+	noindex?: boolean;
+	bodyClass?: string;
 }
 
-const { title, description, jsonLd } = Astro.props;
+const {
+	title,
+	description,
+	jsonLd,
+	alternates = true,
+	noindex = false,
+	bodyClass,
+} = Astro.props;
 
 // Unset by default; see `src/lib/analytics.mjs` and `.env.example`.
 const analyticsScript = analyticsSnippet(
@@ -35,28 +46,39 @@ const FONTS =
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>{title}</title>
 		<meta name="description" content={description} />
+		{noindex && <meta name="robots" content="noindex, nofollow" />}
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link
-			rel="alternate"
-			type="text/markdown"
-			href="/index.md"
-			title="AUDR homepage (Markdown)"
-		/>
-		<link
-			rel="alternate"
-			type="application/ld+json"
-			href="/index.schema.json"
-			title="AUDR homepage (JSON-LD)"
-		/>
+		{
+			alternates && (
+				<Fragment>
+					<link
+						rel="alternate"
+						type="text/markdown"
+						href="/index.md"
+						title="AUDR homepage (Markdown)"
+					/>
+					<link
+						rel="alternate"
+						type="application/ld+json"
+						href="/index.schema.json"
+						title="AUDR homepage (JSON-LD)"
+					/>
+				</Fragment>
+			)
+		}
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link href={FONTS} rel="stylesheet" />
 
-		<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+		{
+			jsonLd && (
+				<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+			)
+		}
 
 		{analyticsScript && <script is:inline set:html={analyticsScript} />}
 	</head>
-	<body>
+	<body class={bodyClass}>
 		<slot />
 
 		<script>
