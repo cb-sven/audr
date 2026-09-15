@@ -7,6 +7,16 @@ import { audrGreen } from './src/styles/code-themes.mjs';
 
 // Written by `npm run sync:spec`, which `dev` and `build` both run first.
 import sidebar from './src/generated-sidebar.json' with { type: 'json' };
+import { analyticsSnippet } from './src/lib/analytics.mjs';
+
+const SITE = 'https://openaudr.dev';
+const SPEC_BASE = '/spec/v1.0.0';
+
+const analyticsScript = analyticsSnippet(
+	process.env.PUBLIC_ANALYTICS_ID,
+	new URL(SITE).hostname
+);
+const analytics = analyticsScript ? [{ tag: 'script', content: analyticsScript }] : [];
 
 // Type for the specification pages. The landing page loads its own faces in
 // its own layout.
@@ -14,7 +24,7 @@ const FONTS =
 	'https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Work+Sans:wght@500;600;700&display=swap';
 
 export default defineConfig({
-	site: 'https://openaudr.dev',
+	site: SITE,
 	markdown: {
 		// SPEC.md is written with straight quotes; leave the source punctuation
 		// alone rather than curling it.
@@ -25,7 +35,6 @@ export default defineConfig({
 			title: 'AUDR',
 			description: 'A JSON record format for agent cost monitoring and monetization.',
 			favicon: '/favicon.svg',
-			// The landing page's mark, so both halves of the site are branded alike.
 			logo: { src: './src/assets/audr-mark.svg' },
 			customCss: ['./src/styles/theme.css'],
 			social: [
@@ -38,10 +47,28 @@ export default defineConfig({
 					attrs: { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: true },
 				},
 				{ tag: 'link', attrs: { rel: 'stylesheet', href: FONTS } },
+				// The specification in its other representations.
+				{
+					tag: 'link',
+					attrs: {
+						rel: 'alternate',
+						type: 'text/markdown',
+						href: `${SPEC_BASE}/SPEC.md`,
+						title: 'AUDR specification (Markdown)',
+					},
+				},
+				{
+					tag: 'link',
+					attrs: {
+						rel: 'describedby',
+						href: `${SPEC_BASE}/audr.schema.json`,
+						title: 'AUDR JSON Schema',
+					},
+				},
+				...analytics,
 			],
 			components: {
-				// The site is light-only, matching the landing page, so the theme
-				// toggle has nothing to toggle between.
+				// The site is light-only, so the theme toggle has nothing to toggle.
 				ThemeSelect: './src/components/EmptyThemeSelect.astro',
 				// The default sidebar plus scroll-spy, since the spec is one page.
 				Sidebar: './src/components/Sidebar.astro',
@@ -66,7 +93,6 @@ export default defineConfig({
 					borderColor: '#223142',
 					codePaddingBlock: '20px',
 					codePaddingInline: '22px',
-					// The panels are flat.
 					frames: { frameBoxShadowCssValue: 'none' },
 				},
 			},

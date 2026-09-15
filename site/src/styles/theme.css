@@ -57,7 +57,6 @@
 	--sl-color-hairline-shade: var(--audr-line);
 	--sl-color-backdrop-overlay: rgba(32, 37, 43, 0.5);
 
-	/* The document theme is flat. */
 	--sl-shadow-sm: none;
 	--sl-shadow-md: none;
 	--sl-shadow-lg: none;
@@ -70,7 +69,7 @@
 	--sl-line-height: 1.65;
 }
 
-/* ---------- tables: the field-description tables are the spec's backbone ---------- */
+/* ---------- tables ---------- */
 
 /* Four narrow columns squashed into a phone are unreadable, so the table
    becomes its own horizontal scroller: `display: block` puts the overflow on
@@ -117,18 +116,6 @@
 	min-width: 100%;
 }
 
-/* ---------- sidebar scroll-spy ---------- */
-
-/* The spec is a single page, so which section you are reading is tracked by
-   `src/scripts/sidebar-scrollspy.js` rather than by the router. `true` rather
-   than `page`, because it marks a position within the page, not a different
-   one; the treatment is Starlight's own for the current entry. */
-.sidebar-content a[aria-current='true'] {
-	font-weight: 600;
-	color: var(--sl-color-text-invert);
-	background-color: var(--sl-color-text-accent);
-}
-
 /* ---------- type ---------- */
 
 :root {
@@ -145,7 +132,6 @@
 	}
 }
 
-/* Headings are Work Sans, a little heavier and tighter than the body face. */
 .sl-markdown-content :is(h1, h2, h3, h4),
 .content-panel h1 {
 	font-family: var(--audr-heading);
@@ -161,7 +147,7 @@
 	letter-spacing: -0.025em;
 }
 
-/* Prose is ink; Starlight sets body copy in the muted grey. */
+/* Starlight sets body copy in the muted grey; this theme wants ink. */
 .sl-markdown-content {
 	color: var(--audr-ink);
 }
@@ -191,10 +177,75 @@
 	border-radius: 0;
 }
 
-/* Set by `src/scripts/sidebar-scrollspy.js` as you scroll. */
+/* `aria-current="true"`, not `"page"`: it marks a position within this page
+   rather than a different page. Set by `src/scripts/sidebar-scrollspy.js`. */
 .sidebar-content a[aria-current='true'] {
 	background-color: #e9eef3;
 	color: #173b5e;
 	border-inline-start-color: var(--audr-brand);
 	font-weight: 600;
+}
+
+/* ---------- the document's closing metadata block ----------
+   SPEC.md ends with a horizontal rule, a four-column table summarising the
+   document, and a one-line colophon. Styled as a row of cards rather than as a
+   plain table: the header row becomes each card's label, the body row its
+   content, and a shared background joins the two. */
+
+.sl-markdown-content hr {
+	margin-top: 5.5rem;
+	border: 0;
+	border-top: 2px solid var(--audr-ink);
+}
+
+.sl-markdown-content hr + table {
+	display: table;
+	width: 100%;
+	table-layout: fixed;
+}
+
+.sl-markdown-content hr + table :is(th, td) {
+	min-width: 0;
+	background: #fafbfc;
+	border: 0;
+	border-inline-start: 1px solid var(--audr-line);
+	vertical-align: top;
+}
+
+/* The column heading is the card's label. */
+.sl-markdown-content hr + table th {
+	padding: 17px 17px 0;
+	font-family: var(--audr-mono);
+	font-size: 0.64rem;
+	font-weight: 800;
+	letter-spacing: 0.1em;
+	color: #68737e;
+}
+
+.sl-markdown-content hr + table td {
+	padding: 0 17px 17px;
+	font-size: 0.76rem;
+	line-height: 1.5;
+	color: var(--audr-muted);
+}
+
+/* Each cell is `**Lead**<br>description`; the lead becomes the card's title. */
+.sl-markdown-content hr + table td strong {
+	display: block;
+	margin-bottom: 5px;
+	font-family: var(--audr-mono);
+	font-size: 0.84rem;
+	font-weight: 700;
+	color: var(--audr-muted);
+}
+
+.sl-markdown-content hr + table td br {
+	display: none;
+}
+
+/* The colophon line that closes the document. */
+.sl-markdown-content hr + table + p {
+	padding-top: 1.75rem;
+	font-size: 0.78rem;
+	color: var(--audr-muted);
 }

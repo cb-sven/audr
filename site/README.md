@@ -75,7 +75,7 @@ site/
 │   ├── styles/theme.css      Starlight, themed to match the spec pages
 │   ├── styles/code-themes.mjs  The landing page's syntax palette
 │   └── assets/audr-mark.svg  The AUDR mark, used in both halves
-└── public/                   favicon, index.md, index.schema.json
+└── public/                   favicon, robots.txt, index.md, index.schema.json
 ```
 
 ## The spec page is generated
@@ -116,6 +116,23 @@ MDX in the project, so it is configured with the spec pages' slate theme as the
 base and the landing page's green one alongside it; it emits both palettes on
 every token, and `landing.css` switches to the green set within `.chunk`. That
 keeps each half's code styling in that half's stylesheet.
+
+## Analytics and SEO
+
+Google Analytics is **not configured by default**. The measurement ID comes from
+`PUBLIC_ANALYTICS_ID` (see `.env.example`); without it no tag is emitted at all,
+so local builds and forks report nothing. When it is set, the tag is still
+guarded at runtime and refuses to load on any host other than the configured
+`site`, so a fork that inherits the variable makes no request either.
+
+`src/lib/analytics.mjs` builds the snippet; both halves of the site use it — the
+landing page in its layout, the specification pages through Starlight's `head`
+config.
+
+Starlight generates the canonical URL, Open Graph and Twitter tags, and
+`sitemap-index.xml` for the specification pages; `public/robots.txt` points at
+the sitemap. The landing page carries its own JSON-LD (see above) and both pages
+link to the Markdown and JSON Schema representations of what they describe.
 
 ## Deployment
 

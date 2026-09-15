@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://openaudr.dev/sitemap-index.xml

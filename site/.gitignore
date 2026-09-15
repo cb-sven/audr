@@ -7,3 +7,8 @@ node_modules/
 src/content/docs/spec/
 src/generated-sidebar.json
 public/spec/
+
+# local environment
+.env
+.env.*
+!.env.example

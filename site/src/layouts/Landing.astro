@@ -8,15 +8,21 @@
  * it does not want.
  */
 import '../styles/landing.css';
+import { analyticsSnippet } from '../lib/analytics.mjs';
 
 interface Props {
 	title: string;
 	description: string;
-	analyticsId?: string;
 	jsonLd: unknown;
 }
 
-const { title, description, analyticsId, jsonLd } = Astro.props;
+const { title, description, jsonLd } = Astro.props;
+
+// Unset by default; see `src/lib/analytics.mjs` and `.env.example`.
+const analyticsScript = analyticsSnippet(
+	import.meta.env.PUBLIC_ANALYTICS_ID,
+	new URL(Astro.site ?? 'https://openaudr.dev').hostname
+);
 
 const FONTS =
 	'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap';
@@ -27,7 +33,6 @@ const FONTS =
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta name="robots" content="noindex, nofollow" />
 		<title>{title}</title>
 		<meta name="description" content={description} />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -49,25 +54,7 @@ const FONTS =
 
 		<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
 
-		{/* Analytics only in a real build, so local previews stay out of the property. */}
-		{
-			analyticsId && import.meta.env.PROD && (
-				<>
-					<script
-						async
-						src={`https://www.googletagmanager.com/gtag/js?id=${analyticsId}`}
-						is:inline
-					/>
-					<script
-						is:inline
-						set:html={`window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', '${analyticsId}');`}
-					/>
-				</>
-			)
-		}
+		{analyticsScript && <script is:inline set:html={analyticsScript} />}
 	</head>
 	<body>
 		<slot />

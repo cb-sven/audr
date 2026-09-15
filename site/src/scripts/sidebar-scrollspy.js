@@ -1,10 +1,10 @@
 /**
  * Highlights the sidebar entry for the section you are reading.
  *
- * The spec is published as one long page, so Starlight's own "current page"
- * marking never moves — every sidebar entry points at the same URL. Starlight
- * scroll-spies its right-hand table of contents natively, but there is no
- * equivalent for the sidebar, so this drives it from scroll position.
+ * The spec is one long page, so Starlight's own "current page" marking never
+ * moves — every sidebar entry points at the same URL. Starlight scroll-spies
+ * its table of contents but not its sidebar, so this drives it from scroll
+ * position.
  */
 
 /** Sidebar entries that point at an anchor on this page, keyed by target id. */
@@ -22,9 +22,7 @@ const headings = [...document.querySelectorAll('.sl-markdown-content h2[id]')].f
 if (headings.length > 0) {
 	/**
 	 * How far down the viewport a heading must reach before its section counts
-	 * as the one being read, as a fraction of viewport height. At 0.3 the
-	 * sidebar moves on once a heading is a third of the way down the screen,
-	 * rather than waiting for it to reach the very top.
+	 * as the one being read, as a fraction of viewport height.
 	 */
 	const ACTIVATION_RATIO = 0.3;
 
@@ -34,8 +32,7 @@ if (headings.length > 0) {
 	function update() {
 		queued = false;
 
-		// Measured per pass, so it follows the viewport through resizes and
-		// orientation changes without needing to be recalculated separately.
+		// Measured per pass, so it follows the viewport through resizes.
 		const activationLine = window.innerHeight * ACTIVATION_RATIO;
 
 		let next = headings[0];
