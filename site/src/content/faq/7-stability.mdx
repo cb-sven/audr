@@ -1,0 +1,13 @@
+---
+order: 7
+question: Is the spec stable enough to build on?
+---
+
+Yes. The three rules at the core of AUDR are stable: one run ID across every
+layer, one authoritative source per field, and strict merging with no silent
+overwrites. These rules will not change without a major version.
+
+The field set will continue to grow as providers introduce new things to
+measure. That's expected and does not break existing implementations. What's
+shipped today is safe to build on, while the schema will continue to evolve with
+the systems it measures.

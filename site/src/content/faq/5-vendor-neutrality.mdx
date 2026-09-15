@@ -1,0 +1,16 @@
+---
+order: 5
+question: Chargebee drafted AUDR. What keeps this from becoming a Chargebee-specific format?
+---
+
+We built AUDR as an open standard because we don't think the infrastructure for
+agent economics should belong to any one company. Agents run across many models,
+routers, tools, applications, and rating systems. The record that connects all of
+that usage should be a common language that anyone can speak, not a format
+designed to pull you toward a particular vendor.
+
+That belief also shapes how we've built AUDR. The spec carries no prices or
+rating logic, and the SDK has no concept of plans, invoices, or how a customer
+should be charged. It records what happened and who it happened for. What you do
+with that data is up to you. Point the records at Chargebee, a competing rating
+engine, your own, or a warehouse for analytics, and AUDR works the same way.

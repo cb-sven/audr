@@ -1,0 +1,26 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+	entry: CollectionEntry<'landing'>;
+}
+
+const { entry } = Astro.props;
+const { meta = [] } = entry.data;
+---
+
+<section class="chunk" data-panel={entry.data.panel}>
+  <slot />
+  {
+    meta.length > 0 && (
+      <div class="meta">
+        {meta.map((item) => (
+          <span class={item.href ? 'meta-contact' : undefined}>
+            {item.label}{item.href ? ' ' : ' · '}
+            {item.href ? <a href={item.href}><b>{item.value}</b></a> : <b>{item.value}</b>}
+          </span>
+        ))}
+      </div>
+    )
+  }
+</section>

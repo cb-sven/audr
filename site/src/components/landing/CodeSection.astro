@@ -1,0 +1,40 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Icon from '../icons/Icon.astro';
+
+interface Props {
+	entry: CollectionEntry<'landing'>;
+}
+
+const { entry } = Astro.props;
+const { title, lede, caption, adapters = [] } = entry.data;
+
+// The marquee scrolls a duplicated track, so the list is rendered twice; the
+// copy is hidden from assistive technology.
+const tracks = [false, true];
+---
+
+<section class="chunk" id={entry.data.sectionId} data-panel={entry.data.panel}>
+  <h2>{title}</h2>
+  {lede && <p>{lede}</p>}
+  <slot />
+  {caption && <p class="code-caption" style="font-weight: 600">{caption}</p>}
+  {
+    adapters.length > 0 && (
+      <div class="marquee" aria-label={`Supported adapters: ${adapters.map((a) => a.name).join(', ')}`}>
+        <div class="marquee-track">
+          {tracks.map((isCopy) => (
+            <div class="marquee-group" aria-hidden={isCopy ? 'true' : 'false'}>
+              {adapters.map((adapter) => (
+                <span class="logo-item">
+                  <Icon name={adapter.icon} />
+                  {adapter.name}
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+</section>

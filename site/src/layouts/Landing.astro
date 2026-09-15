@@ -1,0 +1,85 @@
+---
+/**
+ * The landing page's shell: document head, fonts, structured data, and the
+ * scripts that drive the nav, the FAQ accordion and the canvas graphic.
+ *
+ * Not a Starlight layout: Starlight owns everything under /spec/, this owns /,
+ * and routing the landing page through the docs layout would wrap it in chrome
+ * it does not want.
+ */
+import '../styles/landing.css';
+
+interface Props {
+	title: string;
+	description: string;
+	analyticsId?: string;
+	jsonLd: unknown;
+}
+
+const { title, description, analyticsId, jsonLd } = Astro.props;
+
+const FONTS =
+	'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="robots" content="noindex, nofollow" />
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link
+			rel="alternate"
+			type="text/markdown"
+			href="/index.md"
+			title="AUDR homepage (Markdown)"
+		/>
+		<link
+			rel="alternate"
+			type="application/ld+json"
+			href="/index.schema.json"
+			title="AUDR homepage (JSON-LD)"
+		/>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href={FONTS} rel="stylesheet" />
+
+		<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+
+		{/* Analytics only in a real build, so local previews stay out of the property. */}
+		{
+			analyticsId && import.meta.env.PROD && (
+				<>
+					<script
+						async
+						src={`https://www.googletagmanager.com/gtag/js?id=${analyticsId}`}
+						is:inline
+					/>
+					<script
+						is:inline
+						set:html={`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${analyticsId}');`}
+					/>
+				</>
+			)
+		}
+	</head>
+	<body>
+		<slot />
+
+		<script>
+			import '../scripts/nav.js';
+			import '../scripts/faq.js';
+			import '../scripts/scroll-reveal.js';
+			import { createDigitCylinder } from '../scripts/digit-cylinder.js';
+
+			createDigitCylinder('cylBanner');
+			createDigitCylinder('cylMobile', { allowHover: false });
+		</script>
+	</body>
+</html>

@@ -1,0 +1,200 @@
+/*
+ * The specification pages: a neutral slate-and-blue document theme, mapped onto
+ * Starlight's tokens. The landing page has its own palette in `landing.css`.
+ *
+ * The site is light-only. The tokens are declared for every theme state — bare
+ * `:root` plus both `data-theme` values — so a stale `localStorage` entry or an
+ * OS dark-mode preference cannot half-apply a dark theme there is no palette
+ * for.
+ */
+
+:root,
+:root[data-theme='light'],
+:root[data-theme='dark'] {
+	color-scheme: light;
+
+	/* --- palette --- */
+	--audr-ink: #20252b;
+	--audr-muted: #59636e;
+	--audr-paper: #ffffff;
+	--audr-surface-soft: #f5f7f9;
+	--audr-line: #d8dee4;
+	--audr-brand: #145ea8;
+	--audr-brand-dark: #0c477f;
+	--audr-brand-pale: #eaf3fb;
+
+	--audr-sans: Inter, ui-sans-serif, -apple-system, 'Segoe UI', sans-serif;
+	--audr-heading: 'Work Sans', Inter, ui-sans-serif, -apple-system, sans-serif;
+	--audr-mono: 'Fira Code', SFMono-Regular, Consolas, monospace;
+
+	/* --- Starlight's scale, remapped --- */
+	--sl-color-white: var(--audr-ink);
+	--sl-color-gray-1: #303943;
+	--sl-color-gray-2: var(--audr-muted);
+	--sl-color-gray-3: #6b7681;
+	--sl-color-gray-4: #8b949e;
+	--sl-color-gray-5: var(--audr-line);
+	--sl-color-gray-6: #e6ebef;
+	--sl-color-gray-7: var(--audr-surface-soft);
+	--sl-color-black: var(--audr-paper);
+
+	--sl-color-accent-low: var(--audr-brand-pale);
+	--sl-color-accent: var(--audr-brand);
+	--sl-color-accent-high: var(--audr-brand-dark);
+
+	--sl-color-text: var(--audr-muted);
+	--sl-color-text-accent: var(--audr-brand);
+	--sl-color-text-invert: var(--audr-paper);
+
+	--sl-color-bg: var(--audr-paper);
+	--sl-color-bg-nav: var(--audr-paper);
+	--sl-color-bg-sidebar: #f7f8fa;
+	--sl-color-bg-inline-code: var(--audr-surface-soft);
+	--sl-color-bg-accent: var(--audr-brand);
+
+	--sl-color-hairline: var(--audr-line);
+	--sl-color-hairline-light: var(--audr-line);
+	--sl-color-hairline-shade: var(--audr-line);
+	--sl-color-backdrop-overlay: rgba(32, 37, 43, 0.5);
+
+	/* The document theme is flat. */
+	--sl-shadow-sm: none;
+	--sl-shadow-md: none;
+	--sl-shadow-lg: none;
+
+	--sl-font: var(--audr-sans);
+	--sl-font-mono: var(--audr-mono);
+
+	--sl-content-width: 52rem;
+	--sl-sidebar-width: 17.875rem;
+	--sl-line-height: 1.65;
+}
+
+/* ---------- tables: the field-description tables are the spec's backbone ---------- */
+
+/* Four narrow columns squashed into a phone are unreadable, so the table
+   becomes its own horizontal scroller: `display: block` puts the overflow on
+   the table itself (no wrapper element to add), and the cell minimums give it
+   something to scroll. Column alignment survives because the rows still lay
+   out under the table algorithm. */
+.sl-markdown-content table {
+	display: block;
+	overflow-x: auto;
+	width: 100%;
+	font-size: 0.9rem;
+	border-collapse: collapse;
+}
+
+.sl-markdown-content :is(th, td) {
+	border: 1px solid var(--audr-line);
+	padding: 0.55rem 0.7rem;
+	vertical-align: top;
+	min-width: 9rem;
+}
+
+/* "Required" only ever holds one short word. */
+.sl-markdown-content :is(th, td):nth-child(3) {
+	min-width: 5.5rem;
+}
+
+.sl-markdown-content th {
+	background: #f0f3f5;
+	color: #303943;
+	font-weight: 600;
+	text-align: left;
+}
+
+/* Code blocks are themed in `astro.config.mjs`, through Expressive Code's own
+   style overrides, so its layout maths stays consistent.
+
+   Its lines are laid out at `width: 100%` of the `pre`, which ignores the
+   padding on the `code` between them, leaving every block a few pixels too wide
+   and showing a scrollbar for nothing. Sizing the code box to its content fixes
+   that while still letting genuinely long lines scroll. */
+.expressive-code .frame pre > code {
+	box-sizing: border-box;
+	width: max-content;
+	min-width: 100%;
+}
+
+/* ---------- sidebar scroll-spy ---------- */
+
+/* The spec is a single page, so which section you are reading is tracked by
+   `src/scripts/sidebar-scrollspy.js` rather than by the router. `true` rather
+   than `page`, because it marks a position within the page, not a different
+   one; the treatment is Starlight's own for the current entry. */
+.sidebar-content a[aria-current='true'] {
+	font-weight: 600;
+	color: var(--sl-color-text-invert);
+	background-color: var(--sl-color-text-accent);
+}
+
+/* ---------- type ---------- */
+
+:root {
+	/* Starlight's heading scale runs larger than this theme's. h1 is stepped up
+	   at the breakpoint below, the one Starlight itself steps at, so narrow
+	   viewports keep a sensible size. */
+	--sl-text-h2: 1.8rem; /* 28.8px */
+	--sl-text-h3: 1.17rem; /* 18.72px */
+}
+
+@media (min-width: 50rem) {
+	:root {
+		--sl-text-h1: 3rem; /* 48px */
+	}
+}
+
+/* Headings are Work Sans, a little heavier and tighter than the body face. */
+.sl-markdown-content :is(h1, h2, h3, h4),
+.content-panel h1 {
+	font-family: var(--audr-heading);
+	font-weight: 650;
+	color: var(--audr-ink);
+}
+
+.content-panel h1 {
+	letter-spacing: -0.035em;
+}
+
+.sl-markdown-content h2 {
+	letter-spacing: -0.025em;
+}
+
+/* Prose is ink; Starlight sets body copy in the muted grey. */
+.sl-markdown-content {
+	color: var(--audr-ink);
+}
+
+.sl-markdown-content code:not(.not-content *) {
+	border: 1px solid #e2e6ea;
+	border-radius: 2px;
+	color: #273746;
+}
+
+/* ---------- sidebar ---------- */
+
+.sidebar-content .large {
+	font-size: 0.66rem;
+	font-weight: 750;
+	text-transform: uppercase;
+	letter-spacing: 0.12em;
+	color: #66717c;
+}
+
+.sidebar-content a {
+	font-size: 0.79rem;
+	font-weight: 580;
+	color: #4c5661;
+	padding: 8px 10px;
+	border-inline-start: 3px solid transparent;
+	border-radius: 0;
+}
+
+/* Set by `src/scripts/sidebar-scrollspy.js` as you scroll. */
+.sidebar-content a[aria-current='true'] {
+	background-color: #e9eef3;
+	color: #173b5e;
+	border-inline-start-color: var(--audr-brand);
+	font-weight: 600;
+}

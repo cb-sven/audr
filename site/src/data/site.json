@@ -1,0 +1,22 @@
+{
+  "title": "AUDR — Agent Usage Detail Record",
+  "description": "An open standard for recording who initiated your agent runs and how much each cost, across every system a run passes through.",
+  "wordmark": "AUDR",
+  "wordmarkSuffix": "/ spec",
+  "repo": "https://github.com/openaudr/audr/tree/main/",
+  "analyticsId": "G-ZHFCKJMH0N",
+  "nav": [
+    { "label": "How it works", "href": "#how-it-works" },
+    { "label": "Try it", "href": "#try-it" },
+    { "label": "Get involved", "href": "#get-involved" },
+    { "label": "GitHub", "href": "https://github.com/openaudr/audr/tree/main/", "external": true }
+  ],
+  "footer": {
+    "tagline": "/ Agent Usage Detail Record",
+    "links": [
+      { "label": "For agents", "href": "/index.md" },
+      { "label": "GitHub", "href": "https://github.com/openaudr/audr/tree/main/", "external": true }
+    ]
+  },
+  "faqTitle": "Frequently asked questions"
+}

@@ -1,0 +1,60 @@
+---
+/**
+ * Wires content to templates. There is no copy in this file, or in any of the
+ * components it reaches — every word on the page comes from `src/content/`.
+ */
+import { getCollection } from 'astro:content';
+
+import Landing from '../layouts/Landing.astro';
+import Nav from '../components/landing/Nav.astro';
+import Section from '../components/landing/Section.astro';
+import Visual from '../components/landing/Visual.astro';
+import Faqs from '../components/landing/Faqs.astro';
+import Footer from '../components/landing/Footer.astro';
+
+import site from '../data/site.json';
+import jsonLdGraph from '../data/homepage-jsonld.json';
+import { faqJsonLd } from '../lib/faq-jsonld';
+
+const byOrder = (a: { data: { order: number } }, b: { data: { order: number } }) =>
+	a.data.order - b.data.order;
+
+const sections = (await getCollection('landing')).sort(byOrder);
+const faqs = (await getCollection('faq')).sort(byOrder);
+
+const split = sections.filter((s) => s.data.region === 'split');
+const wide = sections.filter((s) => s.data.region === 'wide');
+
+// The FAQ node is derived from the content files rather than kept by hand, so
+// the structured data cannot drift from what the page actually says.
+const jsonLd = {
+	...jsonLdGraph,
+	'@graph': [...jsonLdGraph['@graph'], faqJsonLd(faqs, 'https://openaudr.dev/')],
+};
+---
+
+<Landing
+	title={site.title}
+	description={site.description}
+	analyticsId={site.analyticsId}
+	jsonLd={jsonLd}
+>
+	<Nav wordmark={site.wordmark} suffix={site.wordmarkSuffix} links={site.nav} />
+
+	<div class="split">
+		<div class="col-left">
+			{split.map((entry) => <Section entry={entry} />)}
+		</div>
+		<Visual />
+	</div>
+
+	{wide.map((entry) => <Section entry={entry} />)}
+
+	<Faqs title={site.faqTitle} entries={faqs} />
+
+	<Footer
+		wordmark={site.wordmark}
+		tagline={site.footer.tagline}
+		links={site.footer.links}
+	/>
+</Landing>

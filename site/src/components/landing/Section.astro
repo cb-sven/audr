@@ -1,0 +1,37 @@
+---
+/**
+ * Picks the template for a landing section and renders its body inside it.
+ *
+ * Content files name their template in frontmatter; nothing here knows what any
+ * section says.
+ */
+import { render, type CollectionEntry } from 'astro:content';
+
+import Hero from './Hero.astro';
+import Prose from './Prose.astro';
+import Steps from './Steps.astro';
+import CodeSection from './CodeSection.astro';
+import Note from './Note.astro';
+import Involve from './Involve.astro';
+
+interface Props {
+	entry: CollectionEntry<'landing'>;
+}
+
+const TEMPLATES = {
+	hero: Hero,
+	prose: Prose,
+	steps: Steps,
+	code: CodeSection,
+	note: Note,
+	involve: Involve,
+} as const;
+
+const { entry } = Astro.props;
+const Template = TEMPLATES[entry.data.template];
+const { Content } = await render(entry);
+---
+
+<Template entry={entry}>
+  <Content />
+</Template>

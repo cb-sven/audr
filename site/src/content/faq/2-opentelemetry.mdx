@@ -1,0 +1,15 @@
+---
+order: 2
+question: Isn't this what OpenTelemetry's GenAI conventions are for?
+---
+
+Partly. AUDR is designed to sit on top of OpenTelemetry, not compete with it.
+OTel's GenAI semantic conventions provide the right foundation for describing
+model calls and usage, and AUDR reuses them. An AUDR record can be emitted as an
+OTel span, and the OTel collector is a first-class sink.
+
+What OTel does not define is the set of rules you need when usage becomes a
+durable record: which attributes are required, how attribution is handled when
+it's missing, how retries remain idempotent, or how corrections are made.
+Observability can tolerate a dropped span. A usage record cannot. AUDR adds
+those requirements and delivery semantics on top of OTel.

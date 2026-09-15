@@ -1,0 +1,134 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://openaudr.dev/#website",
+      "name": "AUDR",
+      "alternateName": "Agent Usage Detail Record",
+      "url": "https://openaudr.dev/",
+      "description": "An open standard for recording who initiated your agent runs and how much each cost, across every system a run passes through.",
+      "inLanguage": "en",
+      "license": "https://www.apache.org/licenses/LICENSE-2.0",
+      "publisher": { "@id": "https://openaudr.dev/#steward" }
+    },
+    {
+      "@type": "TechArticle",
+      "@id": "https://openaudr.dev/#homepage",
+      "name": "Agent Usage Detail Record",
+      "alternateName": "AUDR",
+      "url": "https://openaudr.dev/",
+      "description": "An open standard for recording who initiated your agent runs and how much each cost, across every system a run passes through.",
+      "inLanguage": "en",
+      "license": "https://www.apache.org/licenses/LICENSE-2.0",
+      "encodingFormat": "text/html",
+      "author": { "@id": "https://openaudr.dev/#steward" },
+      "publisher": { "@id": "https://openaudr.dev/#steward" },
+      "isPartOf": { "@id": "https://openaudr.dev/#website" },
+      "mainEntity": { "@id": "https://openaudr.dev/#standard" },
+      "significantLink": [
+        "https://openaudr.dev/index.md",
+        "https://openaudr.dev/spec/v1.0.0/index.html",
+        "https://openaudr.dev/spec/v1.0.0/SPEC.md",
+        "https://openaudr.dev/spec/v1.0.0/audr.schema.json",
+        "https://github.com/openaudr/audr",
+        "https://github.com/openaudr/audr/issues"
+      ],
+      "subjectOf": { "@id": "https://openaudr.dev/#faq" }
+    },
+    {
+      "@type": "DigitalDocument",
+      "@id": "https://openaudr.dev/#standard",
+      "name": "Agent Usage Detail Record (AUDR) Specification",
+      "version": "1.0.0",
+      "license": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://openaudr.dev/spec/v1.0.0/index.html",
+      "encodingFormat": "application/schema+json",
+      "identifier": "https://openaudr.dev/spec/v1.0.0/audr.schema.json",
+      "sameAs": [
+        "https://openaudr.dev/spec/v1.0.0/SPEC.md",
+        "https://openaudr.dev/spec/v1.0.0/audr.schema.json"
+      ],
+      "description": "A JSON record format for agent cost monitoring and monetization. A record identifies its emitter and resource, reports raw model or tool usage, associates the operation with a run, and carries attribution required for downstream cost allocation.",
+      "author": { "@id": "https://openaudr.dev/#steward" },
+      "keywords": [
+        "AUDR",
+        "agent usage",
+        "cost monitoring",
+        "OpenTelemetry",
+        "FOCUS"
+      ]
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://openaudr.dev/#steward",
+      "name": "Chargebee",
+      "url": "https://www.chargebee.com/",
+      "email": "audr@chargebee.com"
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://openaudr.dev/#faq",
+      "url": "https://openaudr.dev/#faqs",
+      "isPartOf": { "@id": "https://openaudr.dev/#homepage" },
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Why AUDR?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "AUDR is useful anywhere you need a reliable record of what an agent run consumed and who or what it was associated with. Wrap your router, emit the records, and it can help you answer questions like: How much does this agentic feature cost? What does this customer's agent usage look like, and how much does it cost? What are the unit economics and margins per customer for my agentic features? Which workflows or models are driving our costs? Which power users are driving our costs?"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Isn't this what OpenTelemetry's GenAI conventions are for?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Partly. AUDR is designed to sit on top of OpenTelemetry, not compete with it. OTel's GenAI semantic conventions provide the right foundation for describing model calls and usage, and AUDR reuses them. An AUDR record can be emitted as an OTel span, and the OTel collector is a first-class sink. What OTel does not define is the set of rules you need when usage becomes a durable record: which attributes are required, how attribution is handled when it's missing, how retries remain idempotent, or how corrections are made. Observability can tolerate a dropped span. A usage record cannot. AUDR adds those requirements and delivery semantics on top of OTel."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How is this different from FOCUS?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "They solve different parts of the same problem. FOCUS standardizes the billing data you receive from providers, so costs from AWS, Azure, and others can be represented in a common schema. AUDR standardizes the usage you emit when an agent run happens, before that usage is priced. The two are complementary. AUDR records can be rated by any backend and mapped into FOCUS-compatible cost data."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What does this cost in latency?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nothing in the normal request path. AUDR emits records asynchronously and out of band, so recording usage does not add synchronous work to inference. The one exception is optional pre-flight budget gating. If you use it, you would make a single check before a run starts."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Chargebee drafted AUDR. What keeps this from becoming a Chargebee-specific format?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "AUDR is an open standard because the infrastructure for agent economics should not belong to any one company. The spec carries no prices or rating logic, and the SDK has no concept of plans, invoices, or how a customer should be charged. Point the records at Chargebee, a competing rating engine, your own, or a warehouse for analytics, and AUDR works the same way."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need a billing system to use this?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. You can store those records locally, send them to your warehouse, feed them into an observability system, or use them for internal cost analysis or future projections. A billing system is just one possible consumer of that record."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is the spec stable enough to build on?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. The three rules at the core of AUDR are stable: one run ID across every layer, one authoritative source per field, and strict merging with no silent overwrites. These rules will not change without a major version. The field set will continue to grow as providers introduce new things to measure, which does not break existing implementations."
+          }
+        }
+      ]
+    }
+  ]
+}

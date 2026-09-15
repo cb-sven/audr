@@ -1,0 +1,37 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+	entry: CollectionEntry<'landing'>;
+}
+
+const { entry } = Astro.props;
+const { title, items = [] } = entry.data;
+const isExternal = (href: string) => href.startsWith('http');
+---
+
+<section class="wide" id={entry.data.sectionId}>
+  <div class="wide-grid">
+    <div>
+      <h2>{title}</h2>
+      <div class="wide-lede"><slot /></div>
+    </div>
+    <div>
+      <div class="involve-list">
+        {
+          items.map((item) => (
+            <a
+              class="involve-item"
+              href={item.href}
+              target={isExternal(item.href) ? '_blank' : undefined}
+              rel={isExternal(item.href) ? 'noopener noreferrer' : undefined}
+            >
+              <span class="involve-title">{item.title}</span>
+              <span class="involve-desc">{item.body}</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>

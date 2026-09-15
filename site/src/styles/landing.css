@@ -1,0 +1,762 @@
+:root {
+        --canvas: #f3faf4;
+        --panel: #e7f3ea;
+        --line: #cfe4d5;
+        --line-strong: #b0d2ba;
+        --ink: #0e2a1a;
+        --ink-soft: #3c5c48;
+        --ink-faint: #78957f;
+        --code-bg: #0c1a11;
+        --code-ink: #e2f3e6;
+        --code-ink-dim: #6d8a76;
+        --code-line: #1d3327;
+
+        /* graphic panel: black ground, pastel green ink, green→teal panel fills */
+        --viz-bg: #000000;
+        --viz-green: #a8e6bf;
+
+        --serif: "Fraunces", Georgia, serif;
+        --sans:
+          "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --mono: "JetBrains Mono", "SF Mono", Consolas, monospace;
+
+        /* text and graphic split the viewport exactly down the middle; the
+       full-width sections lower down reuse this so their right column starts
+       on the same seam */
+        --left-w: minmax(0, 1fr);
+
+        /* one shared text measure, so headings and body copy share an edge */
+        --measure: 540px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--canvas);
+        color: var(--ink);
+        font-family: var(--sans);
+        font-size: 16px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      ::selection {
+        background: var(--ink);
+        color: var(--canvas);
+      }
+      a {
+        color: inherit;
+      }
+
+      /* ---------- nav (context, matches spec page) ---------- */
+      .nav {
+        position: relative;
+        z-index: 30;
+        background: rgba(243, 250, 244, 0.9);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--line);
+      }
+      .nav-inner {
+        max-width: none;
+        margin: 0;
+        padding: 16px 40px 16px clamp(28px, 11vw, 260px);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      /* the AUDR wordmark */
+      .nav-mark {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-family: var(--serif);
+        font-weight: 600;
+        font-size: 24px;
+        letter-spacing: -0.005em;
+        line-height: 1;
+        color: var(--ink);
+        text-decoration: none;
+      }
+      /* the mark inherits ink colour rather than carrying its own black */
+      .mark-icon {
+        width: 42px;
+        height: 42px;
+        flex: none;
+        display: block;
+      }
+      .nav-mark span {
+        font-family: var(--mono);
+        font-size: 13px;
+        font-weight: 400;
+        color: var(--ink-faint);
+        letter-spacing: 0;
+      }
+      .nav-links {
+        display: flex;
+        gap: 24px;
+        font-family: var(--mono);
+        font-size: 13px;
+      }
+      .nav-links a {
+        text-decoration: none;
+        color: var(--ink-soft);
+        border-bottom: 1px solid transparent;
+        padding-bottom: 2px;
+      }
+      .nav-links a:hover {
+        color: var(--ink);
+        border-color: var(--ink);
+      }
+
+      /* ---------- mobile nav ---------- */
+      .nav-toggle {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        margin: -8px -8px -8px 0;
+        background: none;
+        border: 0;
+        padding: 0;
+        cursor: pointer;
+        color: var(--ink);
+      }
+      .nav-toggle .icon-close {
+        display: none;
+      }
+      .nav[data-open="true"] .nav-toggle .icon-open {
+        display: none;
+      }
+      .nav[data-open="true"] .nav-toggle .icon-close {
+        display: block;
+      }
+
+      @media (max-width: 760px) {
+        .nav-toggle {
+          display: inline-flex;
+        }
+        .nav-links {
+          display: none;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          flex-direction: column;
+          gap: 0;
+          background: var(--canvas);
+          border-bottom: 1px solid var(--line);
+          padding: 4px 28px 16px;
+          font-size: 15px;
+        }
+        .nav[data-open="true"] .nav-links {
+          display: flex;
+        }
+        .nav-links a {
+          padding: 14px 0;
+          border-bottom: 1px solid var(--line);
+          border-top: 0;
+          color: var(--ink);
+        }
+        .nav-links a:last-child {
+          border-bottom: 0;
+        }
+        .nav-links a:hover {
+          border-color: var(--line);
+        }
+      }
+
+      /* ---------- split scroll layout ---------- */
+      .split {
+        display: grid;
+        grid-template-columns: var(--left-w) 1fr;
+        column-gap: 0;
+        width: 100%;
+      }
+      .col-left {
+        min-width: 0;
+        padding: 0 72px 0 clamp(28px, 11vw, 260px);
+      }
+      .col-left > .chunk {
+        max-width: 760px;
+      }
+      .col-right {
+        position: relative;
+      }
+
+      .sticky-frame {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+      }
+      .visual-box {
+        width: 100%;
+        height: 100vh;
+        background: var(--viz-bg);
+        overflow: hidden;
+        position: relative;
+        --progress: 0;
+      }
+      .visual-box svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .visual-box canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      /* ---------- chunk (one scrolling section on the left) ---------- */
+      .chunk {
+        padding: 96px 0;
+      }
+      .chunk:first-child {
+        padding-top: 88px;
+      }
+      .chunk + .chunk {
+        border-top: 1px solid var(--line);
+      }
+
+      .eyebrow {
+        font-family: var(--mono);
+        font-size: 13px;
+        color: var(--ink-faint);
+        margin: 0 0 18px;
+      }
+      .stamp {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        color: var(--ink-faint);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0 0 22px;
+      }
+      .stamp .dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--ink-faint);
+        flex: none;
+      }
+
+      h1 {
+        font-family: var(--serif);
+        font-weight: 600;
+        font-size: clamp(44px, 6vw, 68px);
+        line-height: 0.98;
+        letter-spacing: -0.01em;
+        margin: 0 0 6px;
+      }
+      /* the wordmark now lives in the header, so the full name carries the hero
+     in the same serif, at display size */
+      .subtitle {
+        font-family: var(--serif);
+        font-weight: 600;
+        font-size: clamp(38px, 5vw, 58px);
+        line-height: 1.02;
+        letter-spacing: -0.01em;
+        color: var(--ink);
+        margin: 0 0 26px;
+        max-width: 14ch;
+      }
+      .lede {
+        font-size: 19px;
+        line-height: 1.6;
+        color: var(--ink-soft);
+        max-width: 58ch;
+        margin: 0 0 34px;
+      }
+
+      /* Both ledes wrap a paragraph rendered from a content file, so the
+         spacing belongs to the wrapper rather than to the paragraph. */
+      .lede > p,
+      .wide-lede > p {
+        margin: 0;
+      }
+
+      .cta-row {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--sans);
+        font-weight: 500;
+        font-size: 15px;
+        padding: 12px 22px;
+        border-radius: 3px;
+        text-decoration: none;
+        border: 1px solid var(--ink);
+        transition: background 0.15s ease;
+      }
+      .btn-solid {
+        background: var(--ink);
+        color: var(--canvas);
+      }
+      .btn-solid:hover {
+        background: #061a0f;
+      }
+      .btn-outline {
+        background: transparent;
+        color: var(--ink);
+      }
+      .btn-outline:hover {
+        background: var(--panel);
+      }
+      .btn svg {
+        flex: none;
+        display: block;
+      }
+
+      h2 {
+        font-family: var(--serif);
+        font-weight: 500;
+        font-size: clamp(28px, 3vw, 34px);
+        letter-spacing: -0.005em;
+        margin: 0 0 20px;
+        max-width: 22ch;
+      }
+      .chunk p {
+        color: var(--ink-soft);
+        font-size: 16.5px;
+        max-width: var(--measure);
+      }
+      .chunk p + p {
+        margin-top: 16px;
+      }
+
+      .quote-line {
+        display: block;
+        font-family: var(--serif);
+        font-weight: 500;
+        line-height: 1.5;
+      }
+      /* the pull-quote runs to the same measure as the body copy under it, rather
+     than the narrow 22ch used by the other section headings */
+      [data-panel="p-problem"] h2 {
+        max-width: var(--measure);
+        font-size: clamp(
+          23.8px,
+          2.55vw,
+          28.9px
+        ); /* 15% down from the h2 default */
+      }
+
+      /* numbered list, vertical — used only because these three items are a genuine
+     ordered sequence (rules applied in order as a record is assembled) */
+      .steps {
+        margin-top: 36px;
+        display: flex;
+        flex-direction: column;
+      }
+      .step {
+        display: grid;
+        grid-template-columns: 34px 1fr;
+        gap: 18px;
+        padding: 22px 0;
+        border-top: 1px solid var(--line);
+      }
+      .step:first-child {
+        border-top: 1px solid var(--line);
+      }
+      .step-num {
+        font-family: var(--mono);
+        font-size: 13px;
+        color: var(--ink-faint);
+        padding-top: 3px;
+      }
+      .step-title {
+        font-weight: 600;
+        font-size: 16px;
+        margin: 0 0 6px;
+      }
+      .step p {
+        margin: 0;
+        font-size: 15px;
+        max-width: 48ch;
+      }
+
+      .code-caption {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        color: var(--ink-faint);
+        margin: 28px 0 10px;
+      }
+      pre.code {
+        background: var(--code-bg);
+        color: var(--code-ink);
+        font-family: var(--mono);
+        font-size: 13px;
+        line-height: 1.7;
+        padding: 20px 22px;
+        border-radius: 4px;
+        overflow-x: auto;
+        margin: 0;
+        white-space: pre;
+      }
+      pre.code .cm {
+        color: var(--code-ink-dim);
+      }
+      pre.code .key {
+        color: var(--code-ink);
+        font-weight: 500;
+      }
+      pre.code .str {
+        color: #a8d4b6;
+      }
+
+      /* ---------- adapters marquee ---------- */
+      .marquee {
+        margin-top: 18px;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        padding: 22px 0;
+        overflow: hidden;
+        position: relative;
+        -webkit-mask-image: linear-gradient(
+          90deg,
+          transparent,
+          #000 8%,
+          #000 92%,
+          transparent
+        );
+        mask-image: linear-gradient(
+          90deg,
+          transparent,
+          #000 8%,
+          #000 92%,
+          transparent
+        );
+      }
+      .marquee-track {
+        display: flex;
+        width: max-content;
+        animation: marquee 26s linear infinite;
+      }
+      .marquee:hover .marquee-track {
+        animation-play-state: paused;
+      }
+      .marquee-group {
+        display: flex;
+        align-items: center;
+        flex: none;
+      }
+      .logo-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 34px;
+        flex: none;
+        font-family: var(--mono);
+        font-size: 14px;
+        letter-spacing: 0.01em;
+        color: var(--ink-soft);
+        white-space: nowrap;
+      }
+      .logo-item svg {
+        flex: none;
+        color: var(--ink-faint);
+      }
+      @keyframes marquee {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .marquee-track {
+          animation: none;
+        }
+        .marquee {
+          -webkit-mask-image: none;
+          mask-image: none;
+        }
+      }
+
+      /* ---------- closing meta ---------- */
+      .meta {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid var(--line);
+        font-family: var(--mono);
+        font-size: 13px;
+        color: var(--ink-faint);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 28px;
+      }
+      .meta b {
+        font-weight: 400;
+        color: var(--ink-soft);
+      }
+      .meta-contact {
+        flex-basis: 100%;
+      }
+      .meta a {
+        color: var(--ink-soft);
+        text-underline-offset: 3px;
+      }
+
+      [data-panel="p-team"] {
+        padding-top: 0;
+        margin-top: -60px;
+        border-top: none !important;
+      }
+
+      /* ---------- full-width sections (single column shell) ---------- */
+      /* mirrors the .split column ratio above, so the right-hand content in
+     these sections lines up with the graphic panel's edge */
+      .wide {
+        border-top: 1px solid var(--line);
+        padding: 110px 0;
+      }
+      .wide-grid {
+        display: grid;
+        grid-template-columns: var(--left-w) 1fr;
+        column-gap: 0;
+      }
+      .wide-grid > :first-child {
+        min-width: 0;
+        padding: 0 72px 0 clamp(28px, 11vw, 260px);
+      }
+      .wide-grid > :last-child {
+        min-width: 0;
+        padding-right: clamp(28px, 6vw, 120px);
+      }
+      .wide h2 {
+        margin: 0;
+        max-width: 14ch;
+      }
+
+      /* FAQ accordion */
+      .faq-list {
+        border-top: 1px solid var(--line-strong);
+      }
+      .faq-item {
+        border-bottom: 1px solid var(--line-strong);
+      }
+      .faq-q {
+        width: 100%;
+        background: none;
+        border: 0;
+        cursor: pointer;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        padding: 26px 0;
+        color: var(--ink);
+        font-family: var(--serif);
+        font-weight: 500;
+        font-size: clamp(20px, 2vw, 26px);
+        line-height: 1.25;
+        letter-spacing: -0.005em;
+      }
+      .faq-q .chev {
+        flex: none;
+        transition: transform 0.25s ease;
+        color: var(--ink-soft);
+      }
+      .faq-item[data-open="true"] .chev {
+        transform: rotate(180deg);
+      }
+      .faq-a {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.28s ease;
+      }
+      .faq-item[data-open="true"] .faq-a {
+        grid-template-rows: 1fr;
+      }
+      .faq-a > div {
+        overflow: hidden;
+      }
+      .faq-a p {
+        margin: 0 0 26px;
+        color: var(--ink-soft);
+        font-size: 16.5px;
+        max-width: 64ch;
+      }
+
+      /* Get involved */
+      .wide-lede {
+        font-size: 17.5px;
+        line-height: 1.6;
+        color: var(--ink-soft);
+        max-width: 46ch;
+        margin: 22px 0 0;
+      }
+      .involve-list {
+        border-top: 1px solid var(--line-strong);
+      }
+      .involve-item {
+        display: block;
+        padding: 24px 0;
+        border-bottom: 1px solid var(--line-strong);
+        color: inherit;
+        text-decoration: none;
+      }
+      .involve-item:hover .involve-title {
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+      .involve-title {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+        font-size: 16.5px;
+        color: var(--ink);
+      }
+      .involve-desc {
+        display: block;
+        margin-top: 6px;
+        font-size: 15.5px;
+        color: var(--ink-soft);
+        max-width: 56ch;
+      }
+
+      /* footer */
+      .footer {
+        background: var(--code-bg);
+        color: var(--code-ink);
+        padding: 30px clamp(28px, 6vw, 120px) 30px clamp(28px, 11vw, 260px);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        font-family: var(--mono);
+        font-size: 13px;
+      }
+      .footer-mark {
+        font-weight: 600;
+        font-size: 14px;
+      }
+      .footer-mark span {
+        color: var(--code-ink-dim);
+        font-weight: 400;
+      }
+      .footer a {
+        color: var(--code-ink-dim);
+        text-decoration: none;
+      }
+      .footer a:hover {
+        color: var(--code-ink);
+      }
+      .footer-links {
+        display: flex;
+        gap: 20px;
+      }
+
+      @media (max-width: 980px) {
+        .wide {
+          padding: 72px 28px;
+        }
+        .wide-grid {
+          grid-template-columns: 1fr;
+          row-gap: 32px;
+        }
+        .wide-grid > :first-child,
+        .wide-grid > :last-child {
+          padding: 0;
+        }
+        .wide h2 {
+          max-width: none;
+        }
+        .footer {
+          padding: 26px 28px;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+
+      /* ---------- mobile: the graphic splits into two full-bleed acts ----------
+     act 1 (the waterfall) sits below the hero, act 2 (the three records
+     lifting out) sits after the problem section. each plays when scrolled
+     into view rather than on load. */
+      .mviz {
+        display: none;
+      }
+      @media (max-width: 980px) {
+        .split {
+          grid-template-columns: 1fr;
+        }
+        .col-right {
+          display: none;
+        }
+        .col-left {
+          padding: 0 28px;
+        }
+        .col-left > .chunk {
+          max-width: none;
+        }
+
+        .mviz {
+          display: block;
+          background: var(--viz-bg);
+          overflow: hidden;
+          margin: 44px -28px 0;
+        }
+        .mviz canvas {
+          width: 100%;
+          height: 100%;
+          display: block;
+        }
+        .mviz-2 {
+          aspect-ratio: 3/2;
+        }
+      }
+      @media (max-width: 640px) {
+        .chunk {
+          padding: 64px 0;
+        }
+        .steps {
+          margin-top: 28px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+
+      /* ---------- code samples from content files ----------
+         Expressive Code renders the fenced blocks in `src/content/landing/`.
+         It is configured for the specification pages' slate palette, and emits
+         every theme's colours on each token — `--0` slate, `--1` the AUDR green
+         defined in `code-themes.mjs`. The landing page switches to the second
+         set here, so its panels match the rest of this stylesheet rather than
+         the docs. */
+      .chunk .expressive-code pre {
+        background: var(--code-bg);
+        border-color: var(--code-bg);
+        font-family: var(--mono);
+      }
+      .chunk .expressive-code .ec-line span[style^="--"]:not([class]) {
+        color: var(--1, inherit);
+        background-color: var(--1bg, transparent);
+        font-style: var(--1fs, inherit);
+        font-weight: var(--1fw, inherit);
+        text-decoration: var(--1td, inherit);
+      }
+      .chunk .expressive-code code {
+        font-family: var(--mono);
+      }
+      /* The panel is the whole figure; keep the frame out of the way. */
+      .chunk .expressive-code figure,
+      .chunk .expressive-code .frame {
+        box-shadow: none;
+      }

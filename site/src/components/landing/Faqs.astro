@@ -1,0 +1,40 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import Icon from '../icons/Icon.astro';
+
+interface Props {
+	title: string;
+	entries: CollectionEntry<'faq'>[];
+}
+
+const { title, entries } = Astro.props;
+
+// Each answer is the body of its own content file, so it has to be rendered
+// before the markup below can use it.
+const answers = await Promise.all(
+	entries.map(async (entry) => ({ entry, Content: (await render(entry)).Content }))
+);
+---
+
+<section class="wide" id="faqs">
+  <div class="wide-grid">
+    <h2>{title}</h2>
+    <div class="faq-list">
+      {
+        answers.map(({ entry, Content }) => (
+          <div class="faq-item" data-open="false">
+            <button class="faq-q" aria-expanded="false">
+              {entry.data.question}
+              <Icon name="chevron" class="chev" />
+            </button>
+            <div class="faq-a">
+              <div>
+                <Content />
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,19 @@
+{
+  "name": "@audr/site",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync:spec": "node scripts/sync-spec.mjs",
+    "predev": "npm run sync:spec",
+    "dev": "astro dev",
+    "prebuild": "npm run sync:spec",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "7.0.8",
+    "@astrojs/starlight": "^0.41.10",
+    "astro": "^7.2.9"
+  }
+}

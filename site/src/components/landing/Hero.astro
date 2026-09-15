@@ -1,0 +1,35 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import GitHub from '../icons/GitHub.astro';
+
+interface Props {
+	entry: CollectionEntry<'landing'>;
+}
+
+const { entry } = Astro.props;
+const { eyebrow, title, actions = [] } = entry.data;
+---
+
+<section class="chunk" data-panel={entry.data.panel}>
+  {eyebrow && <div class="stamp"><span class="dot" />{eyebrow}</div>}
+  <h1 class="subtitle">{title}</h1>
+  {/* A div, not a p: the slot holds a rendered Markdown paragraph. */}
+  <div class="lede"><slot /></div>
+  {
+    actions.length > 0 && (
+      <div class="cta-row">
+        {actions.map((action, i) => (
+          <a
+            class={`btn ${i === 0 ? 'btn-solid' : 'btn-outline'}`}
+            href={action.href}
+            target={action.external ? '_blank' : undefined}
+            rel={action.external ? 'noopener noreferrer' : undefined}
+          >
+            {action.icon === 'github' && <GitHub />}
+            {action.label}
+          </a>
+        ))}
+      </div>
+    )
+  }
+</section>

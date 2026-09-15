@@ -1,0 +1,18 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+	entry: CollectionEntry<'landing'>;
+}
+
+const { entry } = Astro.props;
+const { eyebrow, quote, mobileVisual } = entry.data;
+---
+
+<section class="chunk" data-panel={entry.data.panel}>
+  {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+  {quote && <h2><span class="quote-line">{quote}</span></h2>}
+  <slot />
+  {/* The narrow-viewport counterpart to the sticky graphic beside the text. */}
+  {mobileVisual && <div class="mviz mviz-2"><canvas id="cylMobile" /></div>}
+</section>

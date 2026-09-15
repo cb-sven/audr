@@ -1,0 +1,29 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+	entry: CollectionEntry<'landing'>;
+}
+
+const { entry } = Astro.props;
+const { title, lede, steps = [] } = entry.data;
+---
+
+<section class="chunk" id={entry.data.sectionId} data-panel={entry.data.panel}>
+  <h2>{title}</h2>
+  {lede && <p>{lede}</p>}
+  <div class="steps">
+    {
+      steps.map((step, i) => (
+        <div class="step">
+          <div class="step-num">{String(i + 1).padStart(2, '0')}</div>
+          <div>
+            <div class="step-title">{step.title}</div>
+            <p>{step.body}</p>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+  <slot />
+</section>

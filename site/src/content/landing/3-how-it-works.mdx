@@ -1,0 +1,46 @@
+---
+order: 3
+region: split
+template: steps
+panel: p-how
+sectionId: how-it-works
+title: How it works
+lede: >-
+  A record carries the raw counts that drive cost, tokens, tool calls, seconds
+  of compute, alongside the business context that says whose cost it is:
+  customer, feature, environment. Every layer keeps reporting what it already
+  reports. AUDR adds three rules that let those reports come together into one
+  record.
+steps:
+  - title: Shared run ID
+    body: >-
+      Minted by the harness, passed to the router in request metadata, and
+      echoed back. Every system that touches the run carries the same ID.
+  - title: Clear authority per field
+    body: >-
+      The harness owns attribution: customer, environment, initiator. The
+      router owns usage: tokens, provider. Each fact has exactly one source.
+  - title: Strict merge rules
+    body: >-
+      The sink assembles records sharing a run and span ID. No component
+      rewrites another's block. Conflicts are rejected, and a correction is a
+      new record, never a mutation.
+---
+
+```json
+// one record, one authoritative source per field
+{
+  "run": {
+    "run_id": "run_8f2a1c", // minted by harness
+    "span_id": "span_4b91"
+  },
+  "attribution": {
+    "customer_id": "acme-corp", // source: harness
+    "initiator": "end_user"
+  },
+  "usage": {
+    "llm": { "input_tokens": 1204, "output_tokens": 318 } // source: router
+  },
+  "emitter": { "component": "router" }
+}
+```

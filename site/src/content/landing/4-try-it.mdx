@@ -1,0 +1,33 @@
+---
+order: 4
+region: split
+template: code
+panel: p-try
+sectionId: try-it
+title: Try it
+lede: >-
+  Wrap your router and get a usage record for every call, including the customer
+  and cost. Write the records to a file or export them to your existing
+  OpenTelemetry pipeline. No account, hosted backend, or pricing configuration
+  needed.
+caption: Adapters
+adapters:
+  - name: NVIDIA NeMo Relay
+    icon: hub
+  - name: OpenRouter
+    icon: route
+  - name: LiteLLM
+    icon: box
+---
+
+```js
+import { withAUDR } from '@audr/openrouter'
+
+const router = withAUDR(openrouter, {
+  customer_id: req.customerId,
+  environment: 'production',
+  initiator:   'end_user',
+  sink:        'file://./audr.jsonl'
+})
+// nothing else changes; every call now emits a record
+```

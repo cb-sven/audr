@@ -1,0 +1,10 @@
+---
+order: 4
+question: What does this cost in latency?
+---
+
+Nothing in the normal request path. AUDR emits records asynchronously and out of
+band, so recording usage does not add synchronous work to inference.
+
+The one exception is optional pre-flight budget gating. If you use it, you would
+make a single check before a run starts.

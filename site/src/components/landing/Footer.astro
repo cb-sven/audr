@@ -1,0 +1,28 @@
+---
+interface Props {
+	wordmark: string;
+	tagline: string;
+	links: { label: string; href: string; external?: boolean }[];
+}
+
+const { wordmark, tagline, links } = Astro.props;
+---
+
+<footer class="footer">
+  <div class="footer-mark">
+    {wordmark} <span>{tagline}</span>
+  </div>
+  <div class="footer-links">
+    {
+      links.map((link) => (
+        <a
+          href={link.href}
+          target={link.external ? '_blank' : undefined}
+          rel={link.external ? 'noopener noreferrer' : undefined}
+        >
+          {link.label}
+        </a>
+      ))
+    }
+  </div>
+</footer>

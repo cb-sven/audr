@@ -1,0 +1,15 @@
+---
+/**
+ * Starlight's sidebar, plus scroll-spy.
+ *
+ * The default component is rendered untouched; the only addition is the script
+ * that marks which section of the single-page spec you are currently reading.
+ */
+import Default from '@astrojs/starlight/components/Sidebar.astro';
+---
+
+<Default><slot /></Default>
+
+<script>
+	import '../scripts/sidebar-scrollspy.js';
+</script>
