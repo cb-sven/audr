@@ -23,6 +23,7 @@ identity and attribution that records from different systems join.
 | --- | --- |
 | `adapters/` | [`adapters/AGENTS.md`](adapters/AGENTS.md) |
 | `adapters/core/python/` | [`adapters/core/python/AGENTS.md`](adapters/core/python/AGENTS.md) |
+| `adapters/litellm/python/` | [`adapters/litellm/python/AGENTS.md`](adapters/litellm/python/AGENTS.md) |
 | `adapters/nemo-relay/python/` | [`adapters/nemo-relay/python/AGENTS.md`](adapters/nemo-relay/python/AGENTS.md) |
 | `sinks/` | [`sinks/AGENTS.md`](sinks/AGENTS.md) |
 | `sinks/chargebee/python/` | [`sinks/chargebee/python/AGENTS.md`](sinks/chargebee/python/AGENTS.md) |
@@ -54,7 +55,7 @@ identity and attribution that records from different systems join.
 
 ```bash
 make install   # tooling dependencies
-make check     # schema, examples, conformance, cross-references, staleness, links, versions
+make check     # schema, examples, conformance, cross-references, staleness, links, versions, tools
 make python    # lint and test every Python package
 make all       # check + python
 ```
