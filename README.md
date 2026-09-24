@@ -50,9 +50,9 @@ independently emit its own AUDR record for that operation; records are never
 deduplicated against each other, only merged, so each keeps its own
 `record_id`. A sink assembles the records that share the same merge key,
 `(run.run_id, run.span_id)`, into one view of the operation. See
-[SPEC.md §1.2](spec/v1.0.0/SPEC.md#12-architecture),
-[§1.4](spec/v1.0.0/SPEC.md#14-record-processing-model), and the
-[Merge key definition](spec/v1.0.0/SPEC.md#2-definitions) for the normative
+[SPEC.md §1.2](spec/SPEC.md#12-architecture),
+[§1.4](spec/SPEC.md#14-record-processing-model), and the
+[Merge key definition](spec/SPEC.md#2-definitions) for the normative
 description.
 
 ```mermaid
