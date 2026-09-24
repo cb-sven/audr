@@ -115,7 +115,7 @@ asyncio.run(main())
 | Part | Reference implementation | Guide |
 | --- | --- | --- |
 | Core SDK | [`audr`](adapters/core/python/README.md) | [`adapters/core/README.md`](adapters/core/README.md) — the `Client`, the sink contract, delivery states |
-| Adapters | [`audr-adapter-nemo-relay`](adapters/nemo-relay/python/README.md) | [`adapters/README.md`](adapters/README.md) |
+| Adapters | [`audr-adapter-litellm`](adapters/litellm/python/README.md), [`audr-adapter-nemo-relay`](adapters/nemo-relay/python/README.md) | [`adapters/README.md`](adapters/README.md) |
 | Sinks | [`audr-sink-chargebee`](sinks/chargebee/python/README.md) | [`sinks/README.md`](sinks/README.md) |
 
 ## Status
@@ -131,13 +131,13 @@ will need. We believe that infrastructure should be open, neutral, and
 community-owned. As adoption grows, the goal is to move cost governance to an
 independent foundation.
 
-Stewarded by Chargebee. Contact us at <audr@chargebee.com>.
+Stewarded by Chargebee. Contact us at [audr@chargebee.com](mailto:audr@chargebee.com).
 
 ## Contributing
 
 Tell us where AUDR breaks for a cost model you have and we haven't imagined.
 [Open an issue](https://github.com/openaudr/audr/issues) or email
-<audr@chargebee.com>. See [CONTRIBUTING.md](CONTRIBUTING.md); participation is governed by
+[audr@chargebee.com](mailto:audr@chargebee.com). See [CONTRIBUTING.md](CONTRIBUTING.md); participation is governed by
 the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Security
