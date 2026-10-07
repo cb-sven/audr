@@ -18,3 +18,11 @@
 /adapters/litellm/python/      @openaudr/audr-maintainers
 /adapters/nemo-relay/python/   @openaudr/audr-maintainers
 /sinks/chargebee/python/       @openaudr/audr-maintainers
+
+# The TypeScript packages.
+/adapters/core/typescript/        @openaudr/audr-maintainers
+/adapters/merge-gateway/typescript/ @openaudr/audr-maintainers
+/adapters/vercel-ai/typescript/   @openaudr/audr-maintainers
+/adapters/mastra/typescript/      @openaudr/audr-maintainers
+/sinks/chargebee/typescript/      @openaudr/audr-maintainers
+/sinks/lago/typescript/           @openaudr/audr-maintainers

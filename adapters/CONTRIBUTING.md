@@ -53,10 +53,27 @@ The runtime itself is an optional dependency, installed through an extra, and im
 activation rather than at import of the adapter package, so that installing the adapter
 does not pull the runtime into processes that do not use it.
 
+## TypeScript specifics
+
+`client.record()` is synchronous, never throws, and runs on the single event loop the
+runtime's callbacks already run on, so a TypeScript adapter needs no cross-thread handoff
+and no `drain()`. Each hook submits its record before it returns. The host's shutdown
+order is: stop starting runtime calls, await the ones in flight, then
+`await client.shutdown()`.
+
+The runtime and `@openaudr/audr` are peer dependencies, so the adapter uses the
+application's own copies, and the adapter imports only the runtime's types. Enforce the
+type-only rule with ESLint's `@typescript-eslint/no-restricted-imports` and
+`allowTypeImports`. Declare both as development dependencies. npm installs the runtime
+and links `@openaudr/audr` from the local workspace. The
+[Vercel AI adapter](vercel-ai/typescript/AGENTS.md) implements all of this.
+
 ## What a new adapter ships
 
-Directory `adapters/<target>/<language>/`, distribution `audr-adapter-<target>`, import
-package `audr_adapter_<target>`. The package contains:
+Directory `adapters/<target>/<language>/`. A Python distribution is `audr-adapter-<target>`
+with the import package `audr_adapter_<target>`; a TypeScript package is
+`@openaudr/audr-adapter-<target>`. The [naming rules](../CONTRIBUTING.md#naming) apply to
+both. A Python package contains:
 
 | Path | Purpose |
 | --- | --- |
@@ -68,8 +85,20 @@ package `audr_adapter_<target>`. The package contains:
 | `AGENTS.md` | How to work inside this package |
 | `CHANGELOG.md`, `LICENSE`, `NOTICE` | Release history and licensing |
 
-Outside the package: a workflow `.github/workflows/adapter-<target>-<language>-verify.yml`,
-a root `Makefile` target, a `CODEOWNERS` line, a row in the table in [`README.md`](README.md),
+A TypeScript package contains the same `tests/`, `README.md` (the npm page), `AGENTS.md`,
+`CHANGELOG.md`, `LICENSE` and `NOTICE`, and in place of the Python build files:
+
+| Path | Purpose |
+| --- | --- |
+| `package.json` | Package metadata, on the shared toolchain; dependencies are locked in the repository's root `package-lock.json` |
+| `Makefile` | `install`, `lint`, `test`, `build`, `examples`, `isolation`, `verify` |
+| `src/`, with `src/version.ts` | The package; `tests/public-api.test.ts` pins its exports and keeps the version equal to `package.json` |
+| `examples/` | Runnable examples on mock models, run by `make examples` |
+| `scripts/package-smoke.mjs` | The smoke test `make isolation` runs against the installed tarball, through `tools/verify-npm-package.mjs` |
+
+Outside the package: a workflow `.github/workflows/adapter-<target>-python-verify.yml` for
+Python, or a filter in `.github/workflows/typescript-verify.yml` for TypeScript, a root
+`Makefile` target, a `CODEOWNERS` line, a row in the table in [`README.md`](README.md),
 and a component `README.md` at `adapters/<target>/` indexing the languages.
 
 ## Before opening a pull request

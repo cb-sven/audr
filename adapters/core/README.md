@@ -7,7 +7,8 @@ directly uses this package alone.
 
 | Language | Distribution | Package guide |
 | --- | --- | --- |
-| [Python](python/) | [![PyPI](https://img.shields.io/pypi/v/audr?include_prereleases&label=audr)](https://pypi.org/project/audr/) | [`python/README.md`](python/README.md) |
+| [Python](python/) | [![PyPI](https://img.shields.io/pypi/v/audr?include_prereleases&label=audr)](https://pypi.org/project/audr/) | [`python/README.md`](python/README.md) — setup, usage, validation, delivery; the full reference is [`python/docs/reference.md`](python/docs/reference.md) |
+| [TypeScript](typescript/) | [![npm](https://img.shields.io/npm/v/@openaudr/audr?include_prereleases&label=%40openaudr%2Faudr)](https://www.npmjs.com/package/@openaudr/audr) | [`typescript/README.md`](typescript/README.md) — setup, usage, validation, delivery; the full reference is [`typescript/docs/reference.md`](typescript/docs/reference.md) |
 
 ## How the parts fit
 
@@ -89,3 +90,4 @@ per record and per batch.
 - [`../../sinks/CONTRIBUTING.md`](../../sinks/CONTRIBUTING.md) — implementing a sink against
   the contract above.
 - [`python/AGENTS.md`](python/AGENTS.md) — working inside the Python package.
+- [`typescript/AGENTS.md`](typescript/AGENTS.md) — working inside the TypeScript package.

@@ -5,6 +5,7 @@
 [![Spec v1.0.0](https://img.shields.io/badge/spec-v1.0.0-blue)](spec/SPEC.md)
 [![PyPI](https://img.shields.io/pypi/v/audr?include_prereleases&label=pypi%20audr)](https://pypi.org/project/audr/)
 [![Python versions](https://img.shields.io/pypi/pyversions/audr)](https://pypi.org/project/audr/)
+[![npm](https://img.shields.io/npm/v/@openaudr/audr?include_prereleases&label=npm%20%40openaudr%2Faudr)](https://www.npmjs.com/package/@openaudr/audr)
 [![License Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 
 An open standard for recording who initiated an agent run and what each step
@@ -90,8 +91,8 @@ sequenceDiagram
 | --- | --- |
 | [`spec/`](spec/SPEC.md) | The standard: [`SPEC.md`](spec/SPEC.md) to implement it, [`audr.schema.json`](spec/audr.schema.json) to validate records, [`examples/record.json`](spec/examples/record.json) for a complete record |
 | [`conformance/`](conformance/README.md) | Language-neutral fixtures every implementation must reproduce |
-| [`adapters/`](adapters/README.md) | Things that produce records — the [Python SDK](adapters/core/python/README.md) and runtime adapters |
-| [`sinks/`](sinks/README.md) | Things that consume records — destinations such as Chargebee |
+| [`adapters/`](adapters/README.md) | Things that produce records — the [Python](adapters/core/python/README.md) and [TypeScript](adapters/core/typescript/README.md) SDKs and runtime adapters |
+| [`sinks/`](sinks/README.md) | Things that consume records — destinations such as Chargebee and Lago |
 | `tools/` | The specification generator and the repository checks, driven by the [`Makefile`](Makefile) |
 
 The schema's canonical URL is its `$id`:
@@ -100,13 +101,9 @@ The schema's canonical URL is its `$id`:
 https://openaudr.dev/spec/v1.0.0/audr.schema.json
 ```
 
-Any JSON Schema Draft 2020-12 validator checks a record against it. In this
-repository, `make examples` validates every example in the specification.
-
-```bash
-make check     # schema, examples, conformance, cross-references, staleness, links, versions
-make spec      # regenerate spec/SPEC.md from the schema, the outline and the prose
-```
+Validate records with a JSON Schema Draft 2020-12 validator. Repository setup,
+verification and specification generation are documented in
+[CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Emitting records
 
@@ -160,9 +157,9 @@ asyncio.run(main())
 
 | Part | Reference implementation | Guide |
 | --- | --- | --- |
-| Core SDK | [`audr`](adapters/core/python/README.md) | [`adapters/core/README.md`](adapters/core/README.md) — the `Client`, the sink contract, delivery states |
-| Adapters | [`audr-adapter-litellm`](adapters/litellm/python/README.md), [`audr-adapter-nemo-relay`](adapters/nemo-relay/python/README.md) | [`adapters/README.md`](adapters/README.md) |
-| Sinks | [`audr-sink-chargebee`](sinks/chargebee/python/README.md) | [`sinks/README.md`](sinks/README.md) |
+| Core SDK | [`audr`](adapters/core/python/README.md) (Python), [`@openaudr/audr`](adapters/core/typescript/README.md) (TypeScript) | [`adapters/core/README.md`](adapters/core/README.md) — the `Client`, the sink contract, delivery states |
+| Adapters | [`audr-adapter-litellm`](adapters/litellm/python/README.md) (Python), [`audr-adapter-nemo-relay`](adapters/nemo-relay/python/README.md) (Python), [`@openaudr/audr-adapter-merge-gateway`](adapters/merge-gateway/typescript/README.md) (TypeScript), [`@openaudr/audr-adapter-vercel-ai`](adapters/vercel-ai/typescript/README.md) (TypeScript), [`@openaudr/audr-adapter-mastra`](adapters/mastra/typescript/README.md) (TypeScript) | [`adapters/README.md`](adapters/README.md) |
+| Sinks | [`audr-sink-chargebee`](sinks/chargebee/python/README.md) (Python), [`@openaudr/audr-sink-chargebee`](sinks/chargebee/typescript/README.md) (TypeScript), [`@openaudr/audr-sink-lago`](sinks/lago/typescript/README.md) (TypeScript) | [`sinks/README.md`](sinks/README.md) |
 
 ## Status
 

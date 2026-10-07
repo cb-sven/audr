@@ -14,7 +14,8 @@ This file summarises the rules to observe and the steps to follow.
    attributed, skip it with a value-free warning rather than billing it to a guess.
 4. The SDK mints `record_id`. Place the runtime's own identifiers on `run.run_id` and
    `run.span_id`.
-5. Make the runtime an optional extra and import it at activation, never at package import.
+5. In Python, make the runtime an optional extra and import it at activation, never at
+   package import. In TypeScript, make it a peer dependency and import only its types.
 
 ## Creating a new adapter
 
@@ -37,4 +38,24 @@ issue agrees the runtime hook and the record shape; if none exists, stop and rep
    [`README.md`](README.md), and `adapters/<target>/README.md` indexing the language.
 5. **Write the README** for PyPI: install, activate and shut down, attribution, record
    shape, operational bounds. Absolute URLs. No version number. Execute every code block.
+6. **Verify:** `make verify` in the package, then `make all` at the root.
+
+For a TypeScript adapter, the steps differ as follows. The Vercel AI adapter
+(`vercel-ai/typescript/`) is the reference.
+
+1. **Read** the "TypeScript specifics" section of [`CONTRIBUTING.md`](CONTRIBUTING.md) as
+   well.
+2. **Create** `adapters/<target>/typescript/` by copying the toolchain files of
+   `core/typescript/` (`tsconfig*.json`, `eslint.config.js`, `vitest.config.ts`, the
+   Prettier files, `LICENSE`, `NOTICE`). In `package.json`: name `@openaudr/audr-adapter-<target>`,
+   ESM only, `engines.node` as the core, the runtime and `@openaudr/audr` as peer
+   dependencies and as development dependencies. npm installs the runtime and links
+   `@openaudr/audr` from the local workspace.
+3. **Implement** the hook and lifecycle, attribution, then mapping, with tests alongside.
+   Import only the runtime's types.
+4. **Wire the repository:** a filter for the package directory in the `changes` job of
+   `.github/workflows/typescript-verify.yml`, the directory in the root `package.json`
+   `workspaces`, a root `Makefile` target `adapter-<target>-typescript` added to
+   `typescript`, and the same `CODEOWNERS`, `README.md` and component index entries.
+5. **Write the README** for npm, under the same rules, with an npm badge.
 6. **Verify:** `make verify` in the package, then `make all` at the root.
