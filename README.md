@@ -40,12 +40,13 @@ attribution that the records join.
 
 ## How a run flows across components
 
-A single metered operation can pass through several components before it's
-billable. Each participating component — harness, router, provider — MAY
-independently emit its own AUDR record for that operation; records are never
-deduplicated against each other, only merged, so each keeps its own
-`record_id`. A sink assembles the records that share the same merge key,
-`(run.run_id, run.span_id)`, into one view of the operation. See
+Each participating layer — harness, router, provider — may emit its own AUDR
+record for an operation, each with its own `record_id`. In this example, the
+harness creates a `run_id` for the run and a distinct `span_id` for each
+operation, passing both along the request path. The sink deduplicates replayed
+records by `record_id` and joins records from different components that share
+`(run.run_id, run.span_id)`; separate operations remain separate. Pricing the
+joined usage happens downstream and is outside AUDR. See
 [SPEC.md §1.2](spec/SPEC.md#12-architecture),
 [§1.4](spec/SPEC.md#14-record-processing-model), and the
 [Merge key definition](spec/SPEC.md#2-definitions) for the normative
@@ -53,24 +54,34 @@ description.
 
 ```mermaid
 sequenceDiagram
-    autonumber
     participant App as Application
     participant Harness as Agent Harness
     participant Router as Router / AI Gateway
-    participant Provider as Provider
+    participant Provider as Model Provider
     participant Sink as Sink
+    participant Rating as Rating<br/>(outside AUDR)
 
-    App->>Harness: Start run (run_id: 01K4N8B0M2C5F7H9J1L3N6P8QR)
-    Harness->>Router: Request generation (span_id: model-call-1)
-    Router->>Provider: Forward request
-    Provider-->>Router: Result + native usage/cost
-    Provider--)Sink: AUDR record (component: provider)
-    Router--)Sink: AUDR record (component: router)
-    Router-->>Harness: Result
-    Harness--)Sink: AUDR record (component: harness)
-    Harness-->>App: Final response
+    App->>Harness: Start an agent run
+    Harness->>Harness: Create run_id
 
-    Note over Sink: Merges the 3 records by shared<br/>(run_id, span_id) into one operation view
+    Note over Harness,Provider: span model-call-1: a model call
+    Harness->>Router: Model request<br/>with run_id and span_id
+    Router->>Provider: Forward request<br/>with the same IDs
+    Provider-->>Router: Result and usage
+    opt Provider also reports
+        Provider--)Sink: AUDR record (provider's view)
+    end
+    Router--)Sink: AUDR record (router's view)
+    Router-->>Harness: Result / tool request
+    Harness--)Sink: AUDR record (harness's view)
+
+    Note over Harness: span tool-call-2<br/>A tool in the same run
+    Harness->>Harness: Run tool<br/>parent_span_id: model-call-1
+    Harness--)Sink: AUDR record (tool usage)
+    Harness-->>App: Response
+
+    Note over Sink: Deduplicate replays by record_id<br/>Join records sharing<br/>run_id and span_id
+    Sink->>Rating: Joined usage, ready to price
 ```
 
 ## Start here
